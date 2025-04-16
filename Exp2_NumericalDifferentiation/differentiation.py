@@ -53,7 +53,7 @@ def plot_errors(deltas, forward_errors, central_errors):
 
 def print_results(deltas, forward_errors, central_errors):
     """打印计算结果表格"""
-     print("\n步长 δ\t\t前向差分误差\t\t中心差分误差")
+    print("\n步长 δ\t\t前向差分误差\t\t中心差分误差")
     print("------------------------------------------------------------")
     for delta, fe, ce in zip(deltas, forward_errors, central_errors):
         # 格式化输出为科学计数法，对齐列
