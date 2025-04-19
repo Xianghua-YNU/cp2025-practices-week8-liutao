@@ -2,104 +2,65 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def f(x):
-    """定义测试函数 f(x) = x(x-1)
+    """定义测试函数 f(x) = x(x-1)"""
+    return x * (x - 1)
     
-    参数:
-        x (float): 输入值
-        
-    返回:
-        float: 函数计算结果
-    """
-    # 学生在此实现函数计算
-    pass
-
 def forward_diff(f, x, delta):
-    """前向差分法计算导数
-    
-    参数:
-        f (function): 要求导的函数
-        x (float): 求导点
-        delta (float): 步长
-        
-    返回:
-        float: 导数的近似值
-    """
-    # 学生在此实现前向差分公式
-    # 提示: 使用 (f(x + delta) - f(x)) / delta
-    pass
-
+    """前向差分法计算导数"""
+    return (f(x + delta) - f(x)) / delta
+   
 def central_diff(f, x, delta):
-    """中心差分法计算导数
-    
-    参数:
-        f (function): 要求导的函数
-        x (float): 求导点
-        delta (float): 步长
-        
-    返回:
-        float: 导数的近似值
-    """
-    # 学生在此实现中心差分公式
-    # 提示: 使用 (f(x + delta) - f(x - delta)) / (2 * delta)
-    pass
+    """中心差分法计算导数"""
+    return (f(x + delta) - f(x - delta)) / (2 * delta)
 
 def analytical_derivative(x):
-    """解析导数 f'(x) = 2x - 1
-    
-    参数:
-        x (float): 求导点
-        
-    返回:
-        float: 导数的精确值
-    """
-    # 学生在此实现解析导数公式
-    pass
+    """解析导数 f'(x) = 2x - 1"""
+    return 2 * x - 1
 
 def calculate_errors(x_point=1.0):
-    """计算不同步长下的误差
-    
-    参数:
-        x_point (float): 求导点，默认为1.0
-        
-    返回:
-        tuple: (deltas, forward_errors, central_errors)
-            deltas: 步长数组
-            forward_errors: 前向差分误差数组
-            central_errors: 中心差分误差数组
-    """
-    # 学生在此实现误差计算
-    # 提示:
-    # 1. 使用np.logspace生成步长序列
-    # 2. 对每个步长计算前向和中心差分
-    # 3. 计算相对误差 = |近似值 - 精确值| / |精确值|
-    pass
+    """计算不同步长下的误差"""
+    deltas = np.logspace(-2, -14, 13, base=10)
+    exact = analytical_derivative(x_point)
+    forward_errors = []
+    central_errors = []
+    for delta in deltas:
+        fd = forward_diff(f, x_point, delta)
+        cd = central_diff(f, x_point, delta)
+        forward_errors.append(abs(fd - exact) / abs(exact))
+        central_errors.append(abs(cd - exact) / abs(exact))
+    return deltas, forward_errors, central_errors
 
 def plot_errors(deltas, forward_errors, central_errors):
-    """绘制误差-步长关系图
+    """绘制误差-步长关系图"""
+    plt.figure(figsize=(10, 6))
     
-    参数:
-        deltas (array): 步长数组
-        forward_errors (array): 前向差分误差数组
-        central_errors (array): 中心差分误差数组
-    """
-    # 学生在此实现绘图功能
-    # 提示:
-    # 1. 使用plt.loglog绘制双对数坐标图
-    # 2. 添加参考线表示理论收敛阶数
-    # 3. 添加图例、标题和坐标轴标签
-    pass
+    # 绘制误差曲线
+    plt.loglog(deltas, forward_errors, 'o-', label='前向差分', color='orange')
+    plt.loglog(deltas, central_errors, 's-', label='中心差分', color='blue')
+    
+    # 添加理论参考线（斜率为1和2）
+    theoretical_deltas = np.array([1e-2, 1e-6])
+    plt.loglog(theoretical_deltas, 1e-1 * theoretical_deltas, '--', label='O(δ)', color='gray')
+    plt.loglog(theoretical_deltas, 1e-3 * (theoretical_deltas**2), '--', label='O(δ²)', color='black')
+    
+    # 图表装饰
+    plt.xlabel('步长 δ（对数坐标）', fontsize=12)
+    plt.ylabel('相对误差（对数坐标）', fontsize=12)
+    plt.title('数值微分误差与步长关系', fontsize=14)
+    plt.legend()
+    plt.grid(True, which='both', linestyle='--', alpha=0.5)
+    plt.show()
 
 def print_results(deltas, forward_errors, central_errors):
-    """打印计算结果表格
-    
-    参数:
-        deltas (array): 步长数组
-        forward_errors (array): 前向差分误差数组
-        central_errors (array): 中心差分误差数组
-    """
-    # 学生在此实现结果打印
-    # 提示: 格式化输出步长和对应误差
-    pass
+    """打印计算结果表格"""
+    print("\n步长 δ\t\t前向差分误差\t\t中心差分误差")
+    print("------------------------------------------------------------")
+    for delta, fe, ce in zip(deltas, forward_errors, central_errors):
+        # 格式化输出为科学计数法，对齐列
+        delta_str = "{:.2e}".format(delta)
+        fe_str = "{:.6e}".format(fe)
+        ce_str = "{:.6e}".format(ce)
+        print(f"{delta_str}\t{fe_str}\t{ce_str}")
 
 def main():
     """主函数"""
